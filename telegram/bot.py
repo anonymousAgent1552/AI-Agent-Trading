@@ -17,6 +17,6 @@ def set_commands():
     return api("setMyCommands", {"commands":[{"command":"start","description":"Start bot"},{"command":"status","description":"Bot status"},{"command":"poi","description":"Show Daily POI"},{"command":"analysis","description":"Run analysis"},{"command":"help","description":"Show commands"}]})
 
 def format_status(state, health):
-    return (f"🤖 AI TRADING AGENT\n\nStatus: 🟢 ONLINE\nSymbol: {config.SYMBOL}\nStrategy: Daily POI + M15 Engulfing\n\nSignals today: {state.get('signals',0)}/{config.MAX_TRADES_PER_DAY}\nGroq: {health['groq']}\nMarket Data: {health['market_data']}\nLast scan: {state.get('last_scan') or '-'}")
+    return (f"🤖 AI TRADING AGENT\n\nStatus: 🟢 ONLINE\nSymbol: {config.SYMBOL}\nStrategy: Daily POI + M5 Engulfing\n\nSignals today: {state.get('signals',0)}/{config.MAX_TRADES_PER_DAY}\nGroq: {health['groq']}\nMarket Data: {health['market_data']}\nLast scan: {state.get('last_scan') or '-'}")
 
 def help_text(): return "📚 COMMANDS\n\n/start - Start bot\n/status - Bot health + signal count\n/poi - Current Daily POI\n/analysis - Run one analysis cycle\n/help - Commands"
