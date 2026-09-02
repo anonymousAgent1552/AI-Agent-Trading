@@ -9,7 +9,7 @@ Telegram-only trading analyst for XAU/USD.
    - Daily Order Block (configurable)
    - OCL / previous Daily Low or High (configurable)
 3. Wait until price enters a Daily POI.
-4. Only then inspect the latest CLOSED M15 candle.
+4. Only then inspect the latest CLOSED M5 candle.
 5. Entry confirmation is ONLY a bullish/bearish engulfing candle.
 6. Candidate setup is sent to Groq for final validation.
 7. Telegram receives VALID / INVALID / WAIT.
@@ -33,7 +33,7 @@ Optional:
 - SYMBOL=XAU/USD
 - TIMEZONE=UTC
 - DAILY_LOOKBACK=80
-- M15_LOOKBACK=50
+- M5_LOOKBACK=50
 - POLL_SECONDS=60
 - POI_TOLERANCE=0.001
 - MAX_TRADES_PER_DAY=2
@@ -80,3 +80,7 @@ The AI never creates a POI from scratch. Python creates objective candidates; Gr
 ## Telegram commands V1.1
 
 /start, /status, /poi, /analysis, /help are supported via Telegram long polling.
+
+
+## V1.2 update
+M5 engulfing is now the trigger. Entry, SL and TP are calculated deterministically in Python with configurable SL buffer and RR (default 1:2). Groq only validates the candidate.
