@@ -12,10 +12,12 @@ SYMBOL = os.getenv("SYMBOL", "XAU/USD")
 TIMEZONE = os.getenv("TIMEZONE", "UTC")
 
 DAILY_LOOKBACK = int(os.getenv("DAILY_LOOKBACK", "80"))
-M15_LOOKBACK = int(os.getenv("M15_LOOKBACK", "50"))
+M5_LOOKBACK = int(os.getenv("M5_LOOKBACK", "100"))
 POLL_SECONDS = int(os.getenv("POLL_SECONDS", "60"))
 POI_TOLERANCE = float(os.getenv("POI_TOLERANCE", "0.001"))
 MAX_TRADES_PER_DAY = int(os.getenv("MAX_TRADES_PER_DAY", "2"))
+SL_BUFFER = float(os.getenv("SL_BUFFER", "0.50"))
+RISK_REWARD = float(os.getenv("RISK_REWARD", "2.0"))
 
 GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 MIN_AI_CONFIDENCE = int(os.getenv("MIN_AI_CONFIDENCE", "70"))
