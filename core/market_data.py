@@ -39,12 +39,12 @@ def get_candles(symbol: str, interval: str, outputsize: int) -> pd.DataFrame:
 def get_daily():
     return get_candles(config.SYMBOL, "1day", config.DAILY_LOOKBACK)
 
-def get_m15():
-    return get_candles(config.SYMBOL, "15min", config.M15_LOOKBACK)
+def get_m5():
+    return get_candles(config.SYMBOL, "5min", config.M5_LOOKBACK)
 
-def latest_closed_m15(df: pd.DataFrame) -> pd.Series:
+def latest_closed_m5(df: pd.DataFrame) -> pd.Series:
     now = pd.Timestamp.now(tz="UTC")
-    completed = df[df["datetime"] + pd.Timedelta(minutes=15) <= now]
+    completed = df[df["datetime"] + pd.Timedelta(minutes=5) <= now]
     if completed.empty:
-        raise DataError("No closed M15 candle available.")
+        raise DataError("No closed M5 candle available.")
     return completed.iloc[-1]
