@@ -3,7 +3,7 @@ import traceback
 import pandas as pd
 
 import config
-from core.market_data import get_daily, get_m15, latest_closed_m15
+from core.market_data import get_daily, get_m5, latest_closed_m5
 from core.daily_poi import build_pois, price_in_poi
 from core.engulfing import detect
 from core.ai_agent import validate_setup
@@ -20,14 +20,14 @@ def format_signal(setup, ai):
     direction = ai["direction"]
 
     return (
-        f"🟡 XAU/USD | M15 SETUP\\n\\n"
+        f"🟡 XAU/USD | M5 SETUP\\n\\n"
         f"📍 DAILY POI\\n"
         f"{p['kind']} | {p['direction']}\\n"
         f"Zone: {fmt(p['low'])} - {fmt(p['high'])}\\n"
         f"Source: {p['source_time']}\\n\\n"
         f"📊 PRICE ACTION\\n"
         f"{e['type']}\\n"
-        f"M15 close: {fmt(c['close'])}\\n"
+        f"M5 close: {fmt(c['close'])}\\n"
         f"Candle: {c['datetime']}\\n\\n"
         f"🧠 AI VALIDATION\\n"
         f"Decision: {ai['decision']}\\n"
@@ -42,8 +42,8 @@ def scan_once(state):
     daily = get_daily()
     pois = build_pois(daily)
 
-    m15 = get_m15()
-    closed = m15[m15["datetime"] + pd.Timedelta(minutes=15) <= pd.Timestamp.now(tz="UTC")].copy()
+    m5 = get_m5()
+    closed = m5[m5["datetime"] + pd.Timedelta(minutes=5) <= pd.Timestamp.now(tz="UTC")].copy()
     if len(closed) < 2:
         return state
 
@@ -81,10 +81,24 @@ def scan_once(state):
         save_state(state)
         return state
 
+    # Deterministic risk plan. Groq validates; it does not invent SL/TP.
+    entry = float(engulf["candle"]["close"])
+    if detected_direction == "BUY":
+        sl = float(engulf["candle"]["low"]) - config.SL_BUFFER
+        risk = entry - sl
+        tp = entry + (risk * config.RISK_REWARD)
+    else:
+        sl = float(engulf["candle"]["high"]) + config.SL_BUFFER
+        risk = sl - entry
+        tp = entry - (risk * config.RISK_REWARD)
+    if risk <= 0:
+        return state
+
     setup = {
         "symbol": config.SYMBOL,
-        "strategy": "DAILY_POI_PLUS_M15_ENGULFING",
+        "strategy": "DAILY_POI_PLUS_M5_ENGULFING",
         "poi": poi.to_dict(),
+        "trade_plan": {"entry": entry, "sl": sl, "tp": tp, "rr": config.RISK_REWARD, "sl_buffer": config.SL_BUFFER},
         "engulfing": {
             "type": engulf["type"],
             "candle": {
